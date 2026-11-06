@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نجوم الانضباط في الحصص الافتراضية</title>
+    
+    <!-- Google Fonts - Cairo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Canvas Confetti CDN for celebration effects -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <!-- Tailwind Config for Custom Colors and Fonts -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            cyan: '#06b6d4',
+                            turquoise: '#14b8a6',
+                            yellow: '#f59e0b',
+                            pink: '#ec4899',
+                            purple: '#8b5cf6',
+                            orange: '#f97316',
+                        }
+                    },
+                    animation: {
+                        'bounce-slow': 'bounce 2s infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'pulse-glow': 'pulseGlow 2s infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-8px)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+                            '50%': { opacity: '0.85', transform: 'scale(1.02)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f8fafc;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Glassmorphism styling */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        /* Ambient floating stars background */
+        .star-bg {
+            background-image: radial-gradient(#fbbf24 1px, transparent 1px), radial-gradient(#38bdf8 1px, #f8fafc 1px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            opacity: 0.35;
+        }
+
+        /* Modal backdrop animation */
+        .fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-slate-800 relative overflow-x-hidden">
+
+    <!-- Decorative background elements -->
+    <div class="fixed inset-0 star-bg pointer-events-none z-0"></div>
+    <div class="fixed -top-24 -left-24 w-72 h-72 bg-sky-200 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+    <div class="fixed -bottom-24 -right-24 w-80 h-80 bg-pink-200 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+    <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-100 rounded-full blur-3xl opacity-40 pointer-events-none"></div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="relative z-10 flex-grow flex flex-col items-center justify-start p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto w-full">
+
+        <!-- HEADER SECTION -->
+        <header class="text-center my-4 sm:my-6 w-full">
+            <div class="inline-flex items-center justify-center space-x-2 space-x-reverse bg-amber-100 text-amber-800 px-4 py-1.5 rounded-full text-sm font-bold shadow-sm mb-3 border border-amber-200">
+                <span class="text-lg">✨</span>
+                <span>منصة مدرستي — الحصص الافتراضية</span>
+                <span class="text-lg">✨</span>
+            </div>
+            
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-800 tracking-tight leading-snug drop-shadow-sm">
+                نجوم الانضباط في الحصص الافتراضية
+            </h1>
+            
+            <p class="text-lg sm:text-xl font-bold text-sky-600 mt-2 flex items-center justify-center gap-2">
+                <span>⭐</span>
+                <span>«بحضورنا نتميّز… وبانضباطنا ننجح»</span>
+                <span>⭐</span>
+            </p>
+        </header>
+
+        <!-- VIEW 1: HOME PAGE (CLASS SELECTION GRID) -->
+        <main id="home-view" class="w-full transition-all duration-300">
+            <!-- Welcome Banner Card -->
+            <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-xl border border-sky-100 text-center mb-8 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-2 h-full bg-gradient-to-b from-sky-400 via-purple-400 to-pink-400"></div>
+                <div class="max-w-3xl mx-auto">
+                    <span class="text-4xl mb-2 block animate-float">👑</span>
+                    <p class="text-base sm:text-lg text-slate-700 leading-relaxed font-semibold">
+                        أهلًا بنجوم الانضباط! حضوركم والتزامكم يصنعان الفرق، وكل حصة تحضرونها خطوة نحو النجاح. اختاروا صفّكم لتكتشفوا رسالتكم الخاصة.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Grid of 9 Classes -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+                <!-- Cards will be populated dynamically by JS for maintainability, but hardcoded array structure is used -->
+            </div>
+        </main>
+
+        <!-- VIEW 2: DEDICATED CLASS PAGE (HIDDEN BY DEFAULT) -->
+        <main id="class-view" class="w-full hidden transition-all duration-300">
+            <!-- Back Button -->
+            <div class="mb-6">
+                <button onclick="showHomeView()" class="inline-flex items-center gap-2 bg-white hover:bg-slate-100 text-slate-700 font-bold py-2.5 px-5 rounded-2xl shadow-md border border-slate-200 transition-all hover:-translate-y-0.5 active:translate-y-0 text-base">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                    <span>العودة إلى الفصول</span>
+                </button>
+            </div>
+
+            <!-- Main Class Display Card -->
+            <div id="class-card-container" class="rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden transition-all duration-300">
+                <!-- Dynamic Header Banner inside Card -->
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-white/30 pb-6 mb-6">
+                    <div class="flex items-center gap-3">
+                        <span id="class-icon" class="text-4xl sm:text-5xl bg-white/30 p-3 rounded-2xl backdrop-blur-md">🏆</span>
+                        <div>
+                            <span id="class-gender-badge" class="inline-block px-3 py-1 bg-white/20 rounded-full text-xs font-bold text-white mb-1 backdrop-blur-sm"></span>
+                            <h2 id="class-title" class="text-2xl sm:text-3xl font-black text-white drop-shadow-md"></h2>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1 text-yellow-300 text-2xl">
+                        <span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span>
+                    </div>
+                </div>
+
+                <!-- Main Message Text -->
+                <div class="bg-white/95 backdrop-blur-md rounded-2xl p-6 sm:p-8 shadow-inner border border-white mb-8 text-center sm:text-right">
+                    <div class="text-slate-400 text-3xl font-serif leading-none mb-2">“</div>
+                    <p id="class-message" class="text-lg sm:text-xl md:text-2xl font-bold text-slate-800 leading-relaxed tracking-wide px-2"></p>
+                    <div class="text-slate-400 text-3xl font-serif leading-none text-left mt-2">”</div>
+                </div>
+
+                <!-- Action Buttons Container -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <!-- Button 1: Celebrate -->
+                    <button id="btn-celebrate" onclick="triggerCelebration()" class="w-full bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-slate-900 font-extrabold py-4 px-4 rounded-2xl shadow-lg border-2 border-amber-200 flex items-center justify-center gap-2 text-lg transition-all transform hover:scale-[1.02] active:scale-95">
+                        <span class="text-2xl animate-bounce">⭐</span>
+                        <span id="btn-celebrate-text">نحن نجوم الانضباط ⭐</span>
+                    </button>
+
+                    <!-- Button 2: Extra Message -->
+                    <button onclick="showExtraMessage()" class="w-full bg-white/20 hover:bg-white/30 active:bg-white/40 text-white font-extrabold py-4 px-4 rounded-2xl shadow-lg border-2 border-white/40 backdrop-blur-md flex items-center justify-center gap-2 text-lg transition-all transform hover:scale-[1.02] active:scale-95">
+                        <span class="text-2xl">💌</span>
+                        <span>رسالة لنا 💌</span>
+                    </button>
+
+                    <!-- Button 3: Pledge -->
+                    <button onclick="openPledgeModal()" class="w-full bg-white/20 hover:bg-white/30 active:bg-white/40 text-white font-extrabold py-4 px-4 rounded-2xl shadow-lg border-2 border-white/40 backdrop-blur-md flex items-center justify-center gap-2 text-lg transition-all transform hover:scale-[1.02] active:scale-95">
+                        <span class="text-2xl">🤝</span>
+                        <span>عهد الانضباط 🤝</span>
+                    </button>
+                </div>
+
+                <!-- Floating Celebration Banner (Hidden by Default) -->
+                <div id="celebration-banner" class="hidden mt-6 bg-amber-300 text-amber-950 rounded-2xl p-4 text-center font-black text-xl shadow-lg border-2 border-amber-400 animate-bounce">
+                    🎉 بالتزامنا يستمر تألقنا! 🎉
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL 1: EXTRA MESSAGES (💌) -->
+    <div id="extra-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-100 fade-in text-center relative">
+            <button onclick="closeModal('extra-modal')" class="absolute top-4 left-4 text-slate-400 hover:text-slate-600 bg-slate-100 rounded-full w-9 h-9 flex items-center justify-center font-bold text-lg">✕</button>
+            
+            <div class="w-16 h-16 bg-pink-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">
+                💌
+            </div>
+            
+            <h3 class="text-xl font-black text-slate-800 mb-2">رسالة تشجيعية</h3>
+            <span id="extra-modal-grade" class="inline-block px-3 py-1 bg-sky-100 text-sky-800 rounded-full text-xs font-bold mb-4"></span>
+            
+            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 mb-6">
+                <p id="extra-message-text" class="text-lg font-bold text-slate-700 leading-relaxed"></p>
+            </div>
+            
+            <div class="flex gap-3">
+                <button onclick="showExtraMessage()" class="flex-1 bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-4 rounded-xl shadow transition">
+                    رسالة أخرى 🎲
+                </button>
+                <button onclick="closeModal('extra-modal')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 px-6 rounded-xl transition">
+                    إغلاق
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: PLEDGE OF DISCIPLINE (🤝) -->
+    <div id="pledge-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-100 fade-in text-center relative">
+            <button onclick="closeModal('pledge-modal')" class="absolute top-4 left-4 text-slate-400 hover:text-slate-600 bg-slate-100 rounded-full w-9 h-9 flex items-center justify-center font-bold text-lg">✕</button>
+            
+            <div class="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">
+                🤝
+            </div>
+            
+            <h3 class="text-2xl font-black text-slate-800 mb-1">عهد الانضباط</h3>
+            <p id="pledge-modal-grade" class="text-sm font-bold text-emerald-600 mb-4"></p>
+            
+            <!-- Pledge Content View -->
+            <div id="pledge-content-step">
+                <div class="bg-emerald-50/80 border-2 border-emerald-200 p-5 rounded-2xl mb-6 text-right">
+                    <p class="text-base sm:text-lg font-bold text-emerald-950 leading-relaxed text-center">
+                        «نعاهد أنفسنا على حضور حصصنا في موعدها، والاستعداد للتعلّم، والمشاركة بأدب، ومواصلة الاجتهاد»
+                    </p>
+                </div>
+                
+                <button onclick="confirmPledge()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black py-3.5 px-6 rounded-2xl shadow-lg border border-emerald-400 text-lg transition transform active:scale-95">
+                    نحن على العهد ✨
+                </button>
+            </div>
+
+            <!-- Pledge Result View (Hidden initially) -->
+            <div id="pledge-result-step" class="hidden">
+                <div class="bg-amber-50 border-2 border-amber-300 p-6 rounded-2xl mb-6 animate-pulse-glow">
+                    <span class="text-4xl mb-2 block">🏅</span>
+                    <p id="pledge-result-text" class="text-xl font-black text-amber-900 leading-relaxed"></p>
+                </div>
+                
+                <button onclick="closeModal('pledge-modal')" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-6 rounded-xl shadow transition">
+                    تم 🌟
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER SECTION -->
+    <footer class="relative z-10 w-full bg-white/80 backdrop-blur-md border-t border-slate-200 py-4 px-4 text-center mt-8">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-slate-700 text-sm font-bold">
+            <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                <span>نجوم الانضباط — منصة مدرستي</span>
+            </div>
+            <div class="text-base font-black text-slate-800 bg-sky-50 px-4 py-1.5 rounded-full border border-sky-200 shadow-sm">
+                الموجهة الطلابية: <span class="text-sky-600">عفاف مشهور</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Data structure for the 9 classes
+        const classesData = [
+            {
+                id: '1-boys',
+                name: 'الصف الأول الابتدائي بنين',
+                gender: 'boys',
+                badge: 'بنين',
+                icon: '🚀',
+                bgGradient: 'from-sky-500 to-blue-600',
+                cardBg: 'bg-gradient-to-br from-sky-500 via-sky-600 to-blue-700',
+                themeColor: '#0284c7',
+                mainMessage: 'یا أبطال الصف الأول، أنتم صغار في أعماركم، كبار في إنجازاتكم! شكرًا لحضوركم والتزامكم، فبكم تتألق حصصنا.',
+                extraMessages: [
+                    'نعتز باعتلائكم قمة الانضباط مبكرًا، يا أبطال الصف الأول الأوفياء!',
+                    'كل ابتسامة وإجابة منكم في الحصة تدل على بطل قادم بقوة!',
+                    'التزامكم اليوم في منصة مدرستي هو أول خطوات نجاحكم العظيم مستقبلاً!'
+                ]
+            },
+            {
+                id: '1-girls',
+                name: 'الصف الأول الابتدائي بنات',
+                gender: 'girls',
+                badge: 'بنات',
+                icon: '🌸',
+                bgGradient: 'from-pink-400 to-rose-500',
+                cardBg: 'bg-gradient-to-br from-pink-400 via-rose-500 to-pink-600',
+                themeColor: '#e11d48',
+                mainMessage: 'يا زهرات الصف الأول، بحضوركنّ تزهر حصصنا فرحًا وعلمًا! شكرًا لالتزامكنّ يا نجمات المستقبل.',
+                extraMessages: [
+                    'حضوركن المبكر ونشاطكن يملأ الحصة الافتراضية بهجة ونورًا يا زهراتنا!',
+                    'يا فراشات الصف الأول، إصراركن على التعلم يبعث على الأمل والفخر!',
+                    'التزامكن وجمال تفاعلكن يجعل معلمتكن تفتخر بكن في كل يوم!'
+                ]
+            },
+            {
+                id: '2-boys',
+                name: 'الصف الثاني الابتدائي بنين',
+                gender: 'boys',
+                badge: 'بنين',
+                icon: '⚡',
+                bgGradient: 'from-teal-400 to-emerald-600',
+                cardBg: 'bg-gradient-to-br from-teal-400 via-teal-500 to-emerald-700',
+                themeColor: '#0d9488',
+                mainMessage: 'أبطال الصف الثاني، حضوركم الجميل واستعدادكم للتعلّم يستحقان الشكر والتقدير! واصلوا تألقكم، فكل حصة خطوة نحو النجاح.',
+                extraMessages: [
+                    'يا أبطال الصف الثاني، شعلة الحماس في أعينكم تضيء شاشاتنا كل صباح!',
+                    'انضباطكم العالي يثبت أنكم رجال المستقبل وأمل الوطن المشرق!',
+                    'يسعدنا حرصكم الدائم على تحضير أدواتكم والمشاركة بروح الفريق!'
+                ]
+            },
+            {
+                id: '2-girls',
+                name: 'الصف الثاني الابتدائي بنات',
+                gender: 'girls',
+                badge: 'بنات',
+                icon: '✨',
+                bgGradient: 'from-purple-400 to-indigo-600',
+                cardBg: 'bg-gradient-to-br from-purple-400 via-purple-500 to-indigo-600',
+                themeColor: '#7c3aed',
+                mainMessage: 'نجمات الصف الثاني، شكرًا لحضوركنّ المميز وحرصكنّ على التعلّم! كل يوم تلتزمن فيه يضيف نجمة إلى مسيرة تميزكنّ.',
+                extraMessages: [
+                    'يا نجمات الصف الثاني، حضوركن المكتمل يثبت حبكن الشديد للعلم والمعرفة!',
+                    'كل حصة تشاركن فيها ترسم طريقًا رائعًا ونحو التفوق والنجاح!',
+                    'أدبكن وانضباطكن في القاعة الافتراضية هو نموذج يقتدى به!'
+                ]
+            },
+            {
+                id: '3-boys',
+                name: 'الصف الثالث الابتدائي بنين',
+                gender: 'boys',
+                badge: 'بنين',
+                icon: '🛡️',
+                bgGradient: 'from-amber-400 to-orange-500',
+                cardBg: 'bg-gradient-to-br from-amber-400 via-orange-500 to-amber-600',
+                themeColor: '#d97706',
+                mainMessage: 'شكرًا لفرسان الصف الثالث على انضباطهم وحضورهم! أنتم أهل للمسؤولية، وباجتهادكم تصنعون إنجازات تستحق الفخر.',
+                extraMessages: [
+                    'فرسان الصف الثالث، تنظيم أوقاتكم وحضوركم بانتظام يصنع منكم قادة المستقبل!',
+                    'تحيتنا لكم يا أبطال، فمشاركاتكم القيمة تزيد الحصة متعة وفائدة!',
+                    'اجتهادكم ومواظبتكم دليل حقيقي على وعيكم الشديد بالمسؤولية!'
+                ]
+            },
+            {
+                id: '3-girls',
+                name: 'الصف الثالث الابتدائي بنات',
+                gender: 'girls',
+                badge: 'بنات',
+                icon: '🎨',
+                bgGradient: 'from-rose-400 to-orange-400',
+                cardBg: 'bg-gradient-to-br from-rose-400 via-pink-500 to-orange-400',
+                themeColor: '#f43f5e',
+                mainMessage: 'مبدعات الصف الثالث، حضوركنّ عنوان للجدّ والطموح! شكرًا لكنّ على الالتزام، ولنجعل كل حصة بداية لإنجاز جديد.',
+                extraMessages: [
+                    'مبدعات الصف الثالث، كل خطوة تخطونها في الحضور تعكس تميزكن الراقي!',
+                    'طاقاتكن الإيجابية وإنجازاتكن في المنصة مصدر فخر واعتزاز دائم لنا!',
+                    'استمري يا نجمة الصف الثالث في التألق، فالمستقبل ينتظر إبداعك!'
+                ]
+            },
+            {
+                id: '4-all',
+                name: 'الصف الرابع الابتدائي',
+                gender: 'girls',
+                badge: 'طالبات',
+                icon: '💎',
+                bgGradient: 'from-indigo-500 to-purple-600',
+                cardBg: 'bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-700',
+                themeColor: '#4f46e5',
+                mainMessage: 'رائعات الصف الرابع، شكرًا لحرصكنّ على حضور الحصص الافتراضية! بانضباطكنّ تكبر أحلامكنّ، وبمثابرتكنّ تقتربن من تحقيقها.',
+                extraMessages: [
+                    'رائعات الصف الرابع، الانضباط هو السر الأكبر لكل ناجحة ومبدعة!',
+                    'حضوركن الملتزم يعكس وعيًا عاليًا ورغبة صادقة في معانقة السحاب!',
+                    'كل ثانية تقضينها في التعلم تبني مستقبلاً ممتلئًا بالإنجازات العظيمة!'
+                ]
+            },
+            {
+                id: '5-all',
+                name: 'الصف الخامس الابتدائي',
+                gender: 'girls',
+                badge: 'طالبات',
+                icon: '🌟',
+                bgGradient: 'from-yellow-400 to-amber-500',
+                cardBg: 'bg-gradient-to-br from-yellow-400 via-amber-500 to-amber-600',
+                themeColor: '#b45309',
+                mainMessage: 'متميزات الصف الخامس، التزامكنّ يعكس وعيكنّ ومسؤوليتكنّ! شكرًا لحضوركنّ وتفاعلكنّ، واصلن التقدم بثقة وطموح.',
+                extraMessages: [
+                    'متميزات الصف الخامس، العقول المبدعة تلتقي دائمًا في قمم الانضباط والالتزام!',
+                    'شكرًا لوعيكن وحرصكن المستمر على المشاركة الفعالة والتعاون المثمر!',
+                    'طموحكن العالي وحرصكن على الوقت هو الوقود الذي يدفعكن دائمًا للأمام!'
+                ]
+            },
+            {
+                id: '6-all',
+                name: 'الصف السادس الابتدائي',
+                gender: 'girls',
+                badge: 'طالبات',
+                icon: '👑',
+                bgGradient: 'from-emerald-400 to-cyan-600',
+                cardBg: 'bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600',
+                themeColor: '#059669',
+                mainMessage: 'ملهمات الصف السادس، شكرًا لكنّ على الانضباط والحرص على التعلّم! أنتنّ قدوة في الالتزام، واستعدادكنّ اليوم يصنع تميزكنّ غدًا.',
+                extraMessages: [
+                    'ملهمات الصف السادس، أنتُن خير قدوة وأجمل مثال للجيل الواعي والمنضبط!',
+                    'رحلة المرحلة الابتدائية توشك على الاكتمال، وانضباطكن يكللها بالمسك والذهب!',
+                    'استعدادهن المستمر وشغفكن بالعلم يفتح أمامكن أبواب المستقبل المشرق!'
+                ]
+            }
+        ];
+
+        let currentClass = null;
+        let lastExtraMessageIndex = -1;
+
+        // Render Home View Grid Cards
+        function renderHomeGrid() {
+            const gridContainer = document.querySelector('#home-view .grid');
+            gridContainer.innerHTML = '';
+
+            classesData.forEach((cls) => {
+                const card = document.createElement('div');
+                card.className = `group cursor-pointer rounded-3xl p-6 text-white shadow-lg ${cls.cardBg} transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl active:scale-95 border border-white/20 relative overflow-hidden flex flex-col justify-between min-h-[190px]`;
+                
+                card.onclick = () => showClassView(cls.id);
+
+                card.innerHTML = `
+                    <div class="absolute -right-6 -bottom-6 text-7xl opacity-20 pointer-events-none group-hover:scale-125 transition-transform duration-500">
+                        ${cls.icon}
+                    </div>
+                    
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="bg-white/25 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-white border border-white/30">
+                                ${cls.badge}
+                            </span>
+                            <span class="text-2xl">${cls.icon}</span>
+                        </div>
+                        
+                        <h3 class="text-xl sm:text-2xl font-black text-white leading-snug drop-shadow-sm">
+                            ${cls.name}
+                        </h3>
+                    </div>
+
+                    <div class="mt-4 flex items-center gap-2 text-amber-200 text-sm font-bold group-hover:translate-x-[-4px] transition-transform">
+                        <span>اكتشف رسالة الصف</span>
+                        <span>←</span>
+                    </div>
+                `;
+                gridContainer.appendChild(card);
+            });
+        }
+
+        // Show Specific Class View
+        function showClassView(classId) {
+            currentClass = classesData.find(c => c.id === classId);
+            if (!currentClass) return;
+
+            // Update UI elements
+            document.getElementById('home-view').classList.add('hidden');
+            const classView = document.getElementById('class-view');
+            classView.classList.remove('hidden');
+
+            const container = document.getElementById('class-card-container');
+            container.className = `rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden transition-all duration-300 ${currentClass.cardBg}`;
+
+            document.getElementById('class-icon').textContent = currentClass.icon;
+            document.getElementById('class-title').textContent = currentClass.name;
+            document.getElementById('class-gender-badge').textContent = currentClass.badge;
+            document.getElementById('class-message').textContent = currentClass.mainMessage;
+
+            // Set Gender-Specific text for Celebrate button
+            const btnCelebrateText = document.getElementById('btn-celebrate-text');
+            if (currentClass.gender === 'boys') {
+                btnCelebrateText.textContent = 'نحن نجوم الانضباط ⭐';
+            } else {
+                btnCelebrateText.textContent = 'نحن نجمات الانضباط ⭐';
+            }
+
+            // Hide celebration banner if left open previously
+            document.getElementById('celebration-banner').classList.add('hidden');
+
+            // Scroll to top of class container smoothly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Return to Home View
+        function showHomeView() {
+            document.getElementById('class-view').classList.add('hidden');
+            document.getElementById('home-view').classList.remove('hidden');
+            currentClass = null;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Trigger Stars & Confetti Celebration
+        function triggerCelebration() {
+            // Show celebration banner safely without layout break
+            const banner = document.getElementById('celebration-banner');
+            banner.classList.remove('hidden');
+
+            // Trigger canvas-confetti with gold & vibrant star shapes
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 70,
+                    spread: 80,
+                    origin: { y: 0.6 },
+                    colors: ['#fbbf24', '#f59e0b', '#38bdf8', '#ec4899', '#8b5cf6'],
+                    shapes: ['star', 'circle'],
+                    scalar: 1.2
+                });
+            }
+
+            // Re-trigger visual pulse effect on button
+            const btn = document.getElementById('btn-celebrate');
+            btn.classList.add('scale-105');
+            setTimeout(() => btn.classList.remove('scale-105'), 200);
+        }
+
+        // Extra Messages Handler (Ensures no 2 identical consecutive picks)
+        function showExtraMessage() {
+            if (!currentClass) return;
+
+            let randomIndex;
+            const total = currentClass.extraMessages.length;
+            
+            do {
+                randomIndex = Math.floor(Math.random() * total);
+            } while (randomIndex === lastExtraMessageIndex && total > 1);
+
+            lastExtraMessageIndex = randomIndex;
+
+            document.getElementById('extra-modal-grade').textContent = currentClass.name;
+            document.getElementById('extra-message-text').textContent = currentClass.extraMessages[randomIndex];
+            
+            document.getElementById('extra-modal').classList.remove('hidden');
+        }
+
+        // Open Pledge Modal
+        function openPledgeModal() {
+            if (!currentClass) return;
+
+            document.getElementById('pledge-modal-grade').textContent = currentClass.name;
+            document.getElementById('pledge-content-step').classList.remove('hidden');
+            document.getElementById('pledge-result-step').classList.add('hidden');
+            
+            document.getElementById('pledge-modal').classList.remove('hidden');
+        }
+
+        // Confirm Pledge Action
+        function confirmPledge() {
+            if (!currentClass) return;
+
+            const resultText = document.getElementById('pledge-result-text');
+            
+            if (currentClass.gender === 'boys') {
+                resultText.textContent = `بكم نفخر يا أبطال ${currentClass.name}!`;
+            } else {
+                resultText.textContent = `بكنّ نفخر يا نجمات ${currentClass.name}!`;
+            }
+
+            document.getElementById('pledge-content-step').classList.add('hidden');
+            document.getElementById('pledge-result-step').classList.remove('hidden');
+
+            // Trigger small stars celebration
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 40,
+                    spread: 60,
+                    origin: { y: 0.5 },
+                    colors: ['#10b981', '#fbbf24']
+                });
+            }
+        }
+
+        // Modal Close Helper
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        // Close modals on clicking backdrop
+        window.onclick = function(event) {
+            const extraModal = document.getElementById('extra-modal');
+            const pledgeModal = document.getElementById('pledge-modal');
+            if (event.target === extraModal) closeModal('extra-modal');
+            if (event.target === pledgeModal) closeModal('pledge-modal');
+        };
+
+        // Initialize on page load
+        window.onload = function() {
+            renderHomeGrid();
+        };
+    </script>
+</body>
+</html>
